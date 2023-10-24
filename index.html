@@ -2,11 +2,48 @@
 <html>
     <head>
         <meta charset="UTF-8">
+        <link rel="icon" type="image/png" href="./img/logo.png" />
         <title>Marbles Game</title>
         <link rel="stylesheet" href="style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
     </head>
     <body>
-        <h1>Marbles Game</h1>
+        <div class="header">
+            <img src="./img/logo.png" alt="Marbles Game">
+            <h1>Marbles game</h3>
+            <span class="inspired_subtext">This game inspired by netflix show 'Squid Game'.</span>
+        </div>
+
+        <div class="main">
+            <div class="start_button">
+                <input type="text" id="player_name_input" placeholder="Enter your name">
+                <button id="start">Start</button>
+            </div>
+            
+            <div class="game_board">
+                <div class="column-1">
+                    <h3 class="player_headline" id="player_name"></h3>
+                    <div class="score">
+                        <span id="player_score">10</span>
+                        <img class="marble" src="./img/marble.png" alt="Marble">
+                    </div>
+                </div>
+                <div class="column-2">
+                    
+                </div>
+                <div class="column-3">
+                    <h3 class="player_headline">Computer</h3>
+                    <div class="score">
+                        <span id="computer_score">10</span>
+                        <img class="marble" src="./img/marble.png" alt="Marble">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="script.js"></script>
+        <script src="events.js"></script>
     </body>
 </html>

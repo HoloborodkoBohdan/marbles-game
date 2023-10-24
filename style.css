@@ -1,5 +1,8 @@
 :root {
     --primary-color: #037a76;
+    --green1-color: #249f9c;
+    --pink1-color: #ed1b76;
+    --pink2-color: #f44786;
 }
 
 
@@ -14,11 +17,117 @@ body {
     padding: 0;
 }
 
+.header {
+    text-align: center;
+    padding: 0 0 2rem 0;
+}
+
+.header img {
+    width: 200px;
+}
+
 h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 300;
     line-height: 1.2;
     margin: 0;
-    padding: 2rem 0;
+}
+
+.inspired_subtext {
+    font-weight: 700;
+    font-size: 1rem;
+    display: inline-block;
+    padding: 0.5em;
+    border-radius: 50%;
+}
+
+
+.main {
+    padding: 3rem;
+}
+
+#start {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    width: 200px;
+    height: 50px;
+    background-color: var(--green1-color);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 auto;
+
+}
+
+#start:hover {
+    background-color: var(--pink1-color);
+}
+
+#start:disabled {
+    opacity: 0.5;
+}
+
+#player_name_input {
+    background-color: #fff;
+    border-radius: 10px;
+    border: 5px solid var(--green1-color);
+    min-height: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 2.5rem;
+    width: 20rem;
     text-align: center;
+    margin: 0 auto 1rem auto;
+}
+
+.game_board {
+    background-color: #fff;
+    border-radius: 5px;
+    min-height: 1rem;
+    display: flex;
+}
+
+.column-1 {
+  flex: 1 0 25%;
+  background-color: #f1f1f1;
+}
+
+.column-2 {
+  flex: 1 0 50%;
+  background-color: #ddd;
+}
+
+.column-3 {
+  flex: 1 0 25%;
+  background-color: #f1f1f1;
+}
+
+.player_headline {
+    color: var(--green1-color);
+    padding: 1rem 1rem 0 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin: 0;
+    text-align: center;
+}
+
+.marble {
+    max-width: 5rem;
+    height: auto;
+}
+
+.score {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.score span {
+    color: var(--pink1-color);
+    font-size: 2.5rem;
+    font-family: 'Black Ops One';
 }
