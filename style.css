@@ -3,6 +3,7 @@
     --green1-color: #249f9c;
     --pink1-color: #ed1b76;
     --pink2-color: #f44786;
+    --black-color: black;
 }
 
 
@@ -130,4 +131,58 @@ h1 {
     color: var(--pink1-color);
     font-size: 2.5rem;
     font-family: 'Black Ops One';
+}
+
+#round_number {
+    color: var(--pink1-color);
+    font-size: 2.5rem;
+    font-family: 'Black Ops One';
+}
+
+.help_text {
+    font-size: medium;
+}
+
+.column-2 p {
+    text-align: center;
+    font-size: x-large;
+    color: var(--black-color);
+    text-transform: uppercase;
+}
+
+.result {
+    display: flex;
+    background: var(--primary-color);
+    min-height: 3rem;
+    margin: 0.5rem;
+    border-radius: 10px;
+    justify-content: center;
+}
+
+.marble_btn {
+    background-color: var(--green1-color);
+    border: none;
+    border-radius: 50%;
+    width: 3rem;
+    height: 3rem;
+    cursor: pointer;
+    margin: 0.5rem;
+    color: #fff;
+    font-size: medium;
+}
+
+.operations {
+    color: var(--black-color);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.selected {
+    display: flex;
+}
+
+.guess {
+    display: flex;
 }
