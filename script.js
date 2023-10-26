@@ -1,16 +1,5 @@
-/* todo:
- - Players classes
- - PC q-ty of rocks selection
- - user select q-ty of rocks pop-up
- - bi/non-bi popup asking select
- - add notification about "угадал или нет" -> calculate rocks
- - 
-*/
-
-/* UI:
- - round number
- - pop-ups for messages prompt/confirm etc...
-*/
+//TODO IDEA: show button to continue next step!!! say Bohdan
+//WARNING: bag where user should click 2-3 times swill exist!!!!
 
 // UI elements
 const playerNameInput = document.querySelector('#player_name_input');
@@ -20,7 +9,7 @@ const gameBoardBlock = document.querySelector('.game_board');
 const buttonContainer = document.querySelector('#button-container');
 const helpText = document.querySelector('.help_text');
 const selectedPlayer = document.querySelector('#selected_player');
-const selectedComputer = document.querySelector('#selected_computer');
+const selectedComputer = document.getElementById('selected_computer');
 const guessPlayer = document.querySelector('#guess_player');
 const guessComputer = document.querySelector('#guess_computer');
 const roundNumber = document.querySelector('#round_number');
@@ -77,31 +66,12 @@ class GameTemplate {
         this.isMachineTurn = this.getRandomBoolean();
         this.player = new Player(false);
         this.machine = new Player(true);
-        this.roundNumber = 1;
+        this.roundNumber = 0;
     }
 
     getRandomBoolean = () => Math.random() < 0.5;
     setIsMachineTurn = () => this.isMachineTurn = !this.isMachineTurn;
     getIsMachineTurn = () => this.isMachineTurn;
-
-    renderPlayerMarblesSelection = () => {
-        buttonContainer.innerHTML = '';
-
-        for (let i = 1; i <= this.player.getCurrentMarbles(); i++) {
-            const button = document.createElement('button');
-            button.classList.add('marble_btn');
-            button.textContent = i;
-            button.addEventListener('click', () => {
-                this.player.selectedMarbles = i;
-                this.player.setSelectedMarbles(i);
-                selectedPlayer.innerHTML = `${i}`;
-                this.selectOddOrEven();
-            });
-            buttonContainer.appendChild(button);
-            helpText.innerHTML = 'Select marbles for your move';
-        }
-
-    }
 
     renderRound = () => {
         roundNumber.innerHTML = GAME.roundNumber;
@@ -119,10 +89,30 @@ class GameTemplate {
         this.machine.selectedMarbles = 0;
         this.player.choise = null;
         this.machine.choise = null;
+        this.renderPlayerMarblesSelection();
+        this.renderRound();
+
         this.player.selectMarbles();
         this.machine.selectMarbles();
-        this.renderPlayerMarblesSelection();
-        renderRound();
+    }
+
+    renderPlayerMarblesSelection = () => {
+        buttonContainer.innerHTML = '';
+
+        for (let i = 1; i <= this.player.getCurrentMarbles(); i++) {
+            const button = document.createElement('button');
+            button.classList.add('marble_btn');
+            button.textContent = i;
+            button.addEventListener('click', () => {
+                this.player.selectedMarbles = i;
+                this.player.setSelectedMarbles(i);
+                selectedPlayer.innerHTML = `${i}`;
+                this.selectOddOrEven();
+            });
+            buttonContainer.appendChild(button);
+            helpText.innerHTML = `Fisrt turn is ${this.isMachineTurn ? "Computer's" : 'your'} for current round. <br>Select marbles for your move.`;
+        }
+
     }
 
     renderPlayerSelectOddEven = () => {
@@ -136,6 +126,7 @@ class GameTemplate {
             this.player.choise = 'odd';
             guessPlayer.innerHTML = this.player.choise;
             buttonContainer.innerHTML = '';
+            this.defineWinner(this.player, this.machine);
         });
         buttonContainer.appendChild(oddButton);
 
@@ -147,6 +138,7 @@ class GameTemplate {
             this.player.choise = 'even';
             guessPlayer.innerHTML = this.player.choise;
             buttonContainer.innerHTML = '';
+            this.defineWinner(this.player, this.machine);
         });
         buttonContainer.appendChild(evenButton);
 
@@ -154,6 +146,7 @@ class GameTemplate {
     }
 
     selectOddOrEven = () => {
+        const turn = this.getIsMachineTurn();
         if (this.getIsMachineTurn()) {
             this.machine.machineGuessOddOrEven();
             guessComputer.innerHTML = this.machine.choise;
@@ -161,43 +154,50 @@ class GameTemplate {
             this.defineWinner(this.machine, this.player);
         } else {
             this.renderPlayerSelectOddEven();
-            this.defineWinner(this.player, this.machine);
         }
     }
 
     defineWinner = (player, oponent) => { // player is a side, who choose odd or even
-        let result = null;
-        if (player.choise === 'even') {
-            result = oponent.getSelectedMarbles() % 2 === 0 ? 'win' : 'lose';
-        } else {
-            result = oponent.getSelectedMarbles() % 2 === 0 ? 'lose' : 'win';
-        }
+        this.setIsMachineTurn();
+        const isEvenOrOdd = oponent.getSelectedMarbles() % 2 === 0 ? 'even' : 'odd';
+        const result = isEvenOrOdd === player.choise ? 'win' : 'lose';
 
+        //TODO: need todo smth - it's rendered but quickly, see the first line in this file -> will be removed and added to historical logs
         helpText.innerHTML = `Round result: ${player.name} ${result}`;
+        console.log(`Round result: ${player.name} ${result}`);
 
         if (result === 'win') {
-            player.addMarbles(oponent.getSelectedMarbles());
-            oponent.addMarbles(-oponent.getSelectedMarbles());
-            this.computeNextLevel()
+            const playerSelectedMarbles = player.getSelectedMarbles();
+
+            player.addMarbles(playerSelectedMarbles);
+            oponent.addMarbles(-playerSelectedMarbles);
+
+            if(oponent.getCurrentMarbles() <= 0) {
+                helpText.innerHTML = `Winner is: ${player.name}`;
+                return;
+            }
+
+            this.computeNextLevel();
+
+            //todo: don't move
+            // const oponentCurrentMarbles = oponent.getCurrentMarbles();
+            // const playerSelectedMarbles = player.getSelectedMarbles();
+            // const isOponentLooser = oponentCurrentMarbles <= playerSelectedMarbles;
+            // const lostMaribles = isOponentLooser ? oponentCurrentMarbles : playerSelectedMarbles;
+            // player.addMarbles(lostMaribles);
+            // oponent.addMarbles(-lostMaribles);
+            // if(isOponentLooser) {
+            //     
+            //     helpText.innerHTML = `Winner is: ${player.name}`;
+            //     return;
+            // }
+            // this.computeNextLevel();
         } else {
             // oponent make guess for same quantity of marbles
-            this.setIsMachineTurn();
             this.selectOddOrEven();
         }
         return result;
     }
-
-    /*
-    - start game
-    - validation on continue game (and start next round)
-    - end game
-    - add current round index
-  
-  
-    - matrix creation/rendering here
-    - analysis how much marbles user should select
-    - analysis even or odd selection
-    */
 };
 
 let GAME = new GameTemplate();
@@ -221,10 +221,7 @@ startButton.addEventListener('click', () => {
     startButtonBlock.style.display = 'none';
     gameBoardBlock.style.display = 'flex';
 
-    GAME.machine.selectMarbles();
-    GAME.player.selectMarbles();
-    GAME.renderPlayerMarblesSelection();
-
+    GAME.computeNextLevel();
 });
 
 window.addEventListener('load', () => {
