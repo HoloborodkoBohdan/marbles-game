@@ -18,13 +18,17 @@ body {
     padding: 0;
 }
 
-.header {
-    text-align: center;
-    padding: 0 0 2rem 0;
+.header a {
+    float: inline-end;
+    padding-top: 3rem;
+    padding-right: 3rem;
+    color: white;
+    text-decoration: none;
 }
 
 .header img {
     width: 200px;
+    margin: auto;
 }
 
 h1 {
@@ -34,17 +38,20 @@ h1 {
     margin: 0;
 }
 
-.inspired_subtext {
-    font-weight: 700;
-    font-size: 1rem;
-    display: inline-block;
-    padding: 0.5em;
-    border-radius: 50%;
-}
-
 
 .main {
-    padding: 3rem;
+    padding: 5rem 3rem 3rem 3rem;
+    min-height: 18rem;
+}
+
+.footer {
+    padding: 1rem;
+    float: right;
+}
+
+.footer a {
+    color: var(--pink2-color);;
+    text-decoration: none;
 }
 
 #start {
@@ -116,6 +123,16 @@ h1 {
     margin: 0;
     text-align: center;
 }
+
+.active {
+    background-color: var(--pink1-color);
+    padding-bottom: 1rem;
+    color: white;
+}
+
+.active::after {
+    content: ' GOES NOW';
+  }
 
 .marble {
     max-width: 5rem;

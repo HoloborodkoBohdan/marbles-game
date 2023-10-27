@@ -14,12 +14,29 @@ const guessPlayer = document.querySelector('#guess_player');
 const guessComputer = document.querySelector('#guess_computer');
 const roundNumber = document.querySelector('#round_number');
 const playerScore = document.querySelector('#player_score');
+const playerName = document.querySelector('#player_name');
+const computerName = document.querySelector('#computer_name');
 const computerScore = document.querySelector('#computer_score');
 
 // default states
 startButton.disabled = true;
 gameBoardBlock.style.display = 'none';
 
+
+// popups
+const rulesPopup = new Popup({
+    id: "rules",
+    title: "Rules",
+    content:
+        "At the beginning, each player has 10 marbles. Each round, players take an arbitrary number of marbles in their fist and take turns guessing whether the opponent has taken an even or odd number of marbles.",
+    sideMargin: "2.9vw",
+    titleColor: "#fff",
+    textColor: "#fff",
+    backgroundColor: "#222",
+    closeColor: "#fff",
+    fontSizeMultiplier: 1.2,
+    linkColor: "#888",
+});
 
 class Player {
     constructor(isMachine) {
@@ -34,14 +51,6 @@ class Player {
     addMarbles = marbles => this.currentMarbles += marbles;
     setSelectedMarbles = marbles => this.selectedMarbles = marbles;
 
-    selectMarbles = () => {
-        if (this.isMachine) {
-            this.machineSelectMarbles(1, this.getCurrentMarbles())
-        } else {
-            this.humanSelectMarbles();
-        }
-    }
-
     machineSelectMarbles = (min, max) => {
         min = Math.ceil(min);
         max = Math.floor(max);
@@ -49,10 +58,6 @@ class Player {
 
         this.setSelectedMarbles(selectedMaribles);
         selectedComputer.innerHTML = `${selectedMaribles}`;
-    };
-
-    humanSelectMarbles = () => { // wtf?
-        const currentMarbles = this.getCurrentMarbles();
     };
 
     machineGuessOddOrEven = () => {
@@ -92,8 +97,7 @@ class GameTemplate {
         this.renderPlayerMarblesSelection();
         this.renderRound();
 
-        this.player.selectMarbles();
-        this.machine.selectMarbles();
+        this.machine.machineSelectMarbles(1, this.machine.getCurrentMarbles());
     }
 
     renderPlayerMarblesSelection = () => {
@@ -110,7 +114,14 @@ class GameTemplate {
                 this.selectOddOrEven();
             });
             buttonContainer.appendChild(button);
-            helpText.innerHTML = `Fisrt turn is ${this.isMachineTurn ? "Computer's" : 'your'} for current round. <br>Select marbles for your move.`;
+            if (this.isMachineTurn) {
+                computerName.classList.add('active');
+                playerName.classList.remove('active');
+            } else {
+                playerName.classList.add('active');
+                computerName.classList.remove('active');
+            }
+            helpText.innerHTML = `Select marbles for your move.`;
         }
 
     }
@@ -164,7 +175,7 @@ class GameTemplate {
 
         //TODO: need todo smth - it's rendered but quickly, see the first line in this file -> will be removed and added to historical logs
         helpText.innerHTML = `Round result: ${player.name} ${result}`;
-        console.log(`Round result: ${player.name} ${result}`);
+        console.log(`Round ${this.roundNumber}: ${player.name} ${result}: (${player.choise} for ${oponent.getSelectedMarbles()}) with ${player.getSelectedMarbles()} on hand`);
 
         if (result === 'win') {
             const playerSelectedMarbles = player.getSelectedMarbles();
@@ -215,7 +226,7 @@ startButton.addEventListener('click', () => {
     }
 
     localStorage.setItem('playerName', playerNameInput.value);
-    document.querySelector('#player_name').innerHTML = playerNameInput.value;
+    playerName.innerHTML = playerNameInput.value;
     GAME.player.name = playerNameInput.value;
 
     startButtonBlock.style.display = 'none';
@@ -230,4 +241,8 @@ window.addEventListener('load', () => {
         playerNameInput.value = savedPlayerName;
         startButton.disabled = false;
     }
+});
+
+document.querySelector('#rules').addEventListener('click', () => {
+    rulesPopup.show();
 });

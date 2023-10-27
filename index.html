@@ -12,8 +12,7 @@
     <body>
         <div class="header">
             <img src="./img/logo.png" alt="Marbles Game">
-            <h1>Marbles game</h3>
-            <span class="inspired_subtext">This game inspired by netflix show 'Squid Game'.</span>
+            <a id="rules" href="#rules">Rules</a>
         </div>
 
         <div class="main">
@@ -48,7 +47,7 @@
                     </div>
                 </div>
                 <div class="column-3">
-                    <h3 class="player_headline">Computer</h3>
+                    <h3 class="player_headline" id="computer_name">Computer</h3>
                     <div class="score">
                         <span id="computer_score">10</span>
                         <img class="marble" src="./img/marble.png" alt="Marble">
@@ -62,6 +61,10 @@
             </div>
         </div>
 
+        <div class="footer">
+            <span>Inspired by netflix show <a href="https://www.netflix.com/ua-en/title/81040344" target="_blank">'Squid Game'</a>.</span>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/@simondmc/popup-js@1.4.2/popup.min.js"></script>
         <script src="script.js"></script>
     </body>
 </html>
