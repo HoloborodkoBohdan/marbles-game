@@ -176,6 +176,8 @@ class GameTemplate {
         this.setIsMachineTurn();
         const isEvenOrOdd = oponent.getSelectedMarbles() % 2 === 0 ? 'even' : 'odd';
         const result = isEvenOrOdd === player.choise ? 'win' : 'lose';
+        const playerSelectedMarbles = player.getSelectedMarbles();
+        const oponentCurrentMarbles = oponent.getCurrentMarbles();
 
         const roundLogText = `Round ${this.roundNumber}: ${player.name} ${result}: (${player.choise} for ${oponent.getSelectedMarbles()}) with ${player.getSelectedMarbles()} on hand`;
         const newLogElem = document.createElement('div');
@@ -183,9 +185,7 @@ class GameTemplate {
         gameLogs.prepend(newLogElem);
 
         if (result === 'win') {
-            const playerSelectedMarbles = player.getSelectedMarbles();
-            const oponentCurrentMarbles = oponent.getCurrentMarbles();
-
+            //todo: it looks here should smth be changed
             if(oponentCurrentMarbles <= playerSelectedMarbles) {
                 player.addMarbles(oponentCurrentMarbles);
                 oponent.addMarbles(-oponentCurrentMarbles);
@@ -198,11 +198,12 @@ class GameTemplate {
             player.addMarbles(playerSelectedMarbles);
             oponent.addMarbles(-playerSelectedMarbles);
 
-            this.computeNextLevel();
         } else {
-            // oponent make guess for same quantity of marbles
-            this.selectOddOrEven();
+            oponent.addMarbles(oponentCurrentMarbles);
+            player.addMarbles(-oponentCurrentMarbles);
         }
+
+        this.computeNextLevel();
     }
 
     renderMatrix() {
