@@ -92,11 +92,16 @@ h1 {
     margin: 0 auto 1rem auto;
 }
 
+.game_interface {
+    flex-direction: column;
+}
+
 .game_board {
     background-color: #fff;
     border-radius: 5px;
     min-height: 1rem;
     display: flex;
+    margin-bottom: 2rem;
 }
 
 .column-1 {
@@ -203,3 +208,24 @@ h1 {
 .guess {
     display: flex;
 }
+
+.game_info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.game_logs {
+    width: 22rem;
+    height: 8rem;
+    background-color: #ddd;
+    color: var(--black-color);;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    font-size: smaller;
+    overflow-y: scroll;
+    margin-bottom: 2rem;
+}
+
+.game_matrix {}

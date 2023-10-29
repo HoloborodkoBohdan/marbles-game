@@ -20,43 +20,48 @@
                 <input type="text" id="player_name_input" placeholder="Enter your name">
                 <button id="start">Start</button>
             </div>
-            
-            <div class="game_board">
-                <div class="column-1">
-                    <h3 class="player_headline" id="player_name"></h3>
-                    <div class="score">
-                        <span id="player_score">10</span>
-                        <img class="marble" src="./img/marble.png" alt="Marble">
+            <div class="game_interface">
+                <div class="game_board">
+                    <div class="column-1">
+                        <h3 class="player_headline" id="player_name"></h3>
+                        <div class="score">
+                            <span id="player_score">10</span>
+                            <img class="marble" src="./img/marble.png" alt="Marble">
+                        </div>
+    
+                        <div class="operations">
+                            <p class="selected">You select: <span id="selected_player"></span></p>
+                            <p class="guess">Your guess is: <span id="guess_player"></span></p>
+                        </div>
                     </div>
-
-                    <div class="operations">
-                        <p class="selected">You select: <span id="selected_player"></span></p>
-                        <p class="guess">Your guess is: <span id="guess_player"></span></p>
-                    </div>
-                </div>
-                <div class="column-2">
-                    <p>Round: <span id="round_number">1</span></p>
-                    <p class="help_text"></p>
-
-                    <div class="result">
-                        <div class="player_choise">
-                            <div id="button-container">
-
+                    <div class="column-2">
+                        <p>Round: <span id="round_number">1</span></p>
+                        <p class="help_text"></p>
+    
+                        <div class="result">
+                            <div class="player_choise">
+                                <div id="button-container">
+    
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="column-3">
+                        <h3 class="player_headline" id="computer_name">Computer</h3>
+                        <div class="score">
+                            <span id="computer_score">10</span>
+                            <img class="marble" src="./img/marble.png" alt="Marble">
+                        </div>
+    
+                        <div class="operations">
+                            <p class="selected">Computer select: <span id="selected_computer"></span></p>
+                            <p class="guess">Computer guess is: <span id="guess_computer"></span></p>
+                        </div>
+                    </div>
                 </div>
-                <div class="column-3">
-                    <h3 class="player_headline" id="computer_name">Computer</h3>
-                    <div class="score">
-                        <span id="computer_score">10</span>
-                        <img class="marble" src="./img/marble.png" alt="Marble">
-                    </div>
-
-                    <div class="operations">
-                        <p class="selected">Computer select: <span id="selected_computer"></span></p>
-                        <p class="guess">Computer guess is: <span id="guess_computer"></span></p>
-                    </div>
+                <div class="game_info">
+                    <div class="game_logs"></div>
+                    <div class="game_matrix"></div>
                 </div>
             </div>
         </div>

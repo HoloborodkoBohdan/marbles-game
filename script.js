@@ -5,6 +5,7 @@
 const playerNameInput = document.querySelector('#player_name_input');
 const startButton = document.querySelector('#start');
 const startButtonBlock = document.querySelector('.start_button');
+const gameInterfaceBlock = document.querySelector('.game_interface');
 const gameBoardBlock = document.querySelector('.game_board');
 const buttonContainer = document.querySelector('#button-container');
 const helpText = document.querySelector('.help_text');
@@ -17,10 +18,11 @@ const playerScore = document.querySelector('#player_score');
 const playerName = document.querySelector('#player_name');
 const computerName = document.querySelector('#computer_name');
 const computerScore = document.querySelector('#computer_score');
+const gameLogs = document.querySelector('.game_logs');
 
 // default states
 startButton.disabled = true;
-gameBoardBlock.style.display = 'none';
+gameInterfaceBlock.style.display = 'none';
 
 
 // popups
@@ -123,6 +125,8 @@ class GameTemplate {
             }
             helpText.innerHTML = `Select marbles for your move.`;
         }
+        //todo: remove!!!
+        this.renderMatrix();
 
     }
 
@@ -173,46 +177,79 @@ class GameTemplate {
         const isEvenOrOdd = oponent.getSelectedMarbles() % 2 === 0 ? 'even' : 'odd';
         const result = isEvenOrOdd === player.choise ? 'win' : 'lose';
 
-        //TODO: need todo smth - it's rendered but quickly, see the first line in this file -> will be removed and added to historical logs
-        helpText.innerHTML = `Round result: ${player.name} ${result}`;
-        console.log(`Round ${this.roundNumber}: ${player.name} ${result}: (${player.choise} for ${oponent.getSelectedMarbles()}) with ${player.getSelectedMarbles()} on hand`);
+        const roundLogText = `Round ${this.roundNumber}: ${player.name} ${result}: (${player.choise} for ${oponent.getSelectedMarbles()}) with ${player.getSelectedMarbles()} on hand`;
+        const newLogElem = document.createElement('div');
+        newLogElem.innerHTML = roundLogText;
+        gameLogs.prepend(newLogElem);
 
         if (result === 'win') {
             const playerSelectedMarbles = player.getSelectedMarbles();
+            const oponentCurrentMarbles = oponent.getCurrentMarbles();
+
+            if(oponentCurrentMarbles <= playerSelectedMarbles) {
+                player.addMarbles(oponentCurrentMarbles);
+                oponent.addMarbles(-oponentCurrentMarbles);
+                helpText.innerHTML = `Winner is: ${player.name}`;
+                playerScore.innerHTML = GAME.player.getCurrentMarbles();
+                computerScore.innerHTML = GAME.machine.getCurrentMarbles();
+                return; // return finish popup
+            }
 
             player.addMarbles(playerSelectedMarbles);
             oponent.addMarbles(-playerSelectedMarbles);
 
-            if(oponent.getCurrentMarbles() <= 0) {
-                helpText.innerHTML = `Winner is: ${player.name}`;
-                return;
-            }
-
             this.computeNextLevel();
-
-            //todo: don't move
-            // const oponentCurrentMarbles = oponent.getCurrentMarbles();
-            // const playerSelectedMarbles = player.getSelectedMarbles();
-            // const isOponentLooser = oponentCurrentMarbles <= playerSelectedMarbles;
-            // const lostMaribles = isOponentLooser ? oponentCurrentMarbles : playerSelectedMarbles;
-            // player.addMarbles(lostMaribles);
-            // oponent.addMarbles(-lostMaribles);
-            // if(isOponentLooser) {
-            //     
-            //     helpText.innerHTML = `Winner is: ${player.name}`;
-            //     return;
-            // }
-            // this.computeNextLevel();
         } else {
             // oponent make guess for same quantity of marbles
             this.selectOddOrEven();
         }
-        return result;
+    }
+
+    renderMatrix() {
+        //matrix data generation
+        const playerCurrentMarbles = this.player.getCurrentMarbles();
+        const length = this.machine.getCurrentMarbles();
+        const machineMarblesList = Array.from({ length }).map((_, i) => i + 1);
+
+        const generateMatrixRow = (isEvenSelect) => machineMarblesList.map((marblesQty) => {
+            const isEvenQty = marblesQty % 2 === 0;
+            const expectedProfit = playerCurrentMarbles > marblesQty ? marblesQty : playerCurrentMarbles;
+        
+            if(isEvenSelect) {
+                return isEvenQty ? `(${expectedProfit}, 0)` : `(0, ${-expectedProfit})`;
+            }
+            return isEvenQty ? `(0, ${-expectedProfit})` : `(${expectedProfit}, 0)`;    
+        });
+
+        const matrixData = [machineMarblesList, generateMatrixRow(true), generateMatrixRow(false)];
+        
+        // matrix creation
+        const tableContainer = document.querySelector(".game_matrix");
+        const table = document.createElement("table");
+        const headers = ["Marbles in the fist", "Player guessed even", "Player guessed edd"];
+        headers.forEach(headerText => {
+            const headerCell = document.createElement("th");
+            headerCell.textContent = headerText;
+        });
+
+        matrixData.forEach((rowData, rowIndex) => {
+            const row = document.createElement("tr");
+            const firstCell = document.createElement("td");
+                firstCell.textContent = headers[rowIndex];
+                row.appendChild(firstCell);
+            rowData.forEach(cellData => {
+                const cell = document.createElement("td");
+                cell.textContent = cellData;
+                row.appendChild(cell);
+            });
+            table.appendChild(row);
+        });
+        tableContainer.innerHTML = "";
+        tableContainer.appendChild(table);
     }
 };
 
 let GAME = new GameTemplate();
-
 
 // events
 playerNameInput.addEventListener('input', () => {
@@ -230,7 +267,7 @@ startButton.addEventListener('click', () => {
     GAME.player.name = playerNameInput.value;
 
     startButtonBlock.style.display = 'none';
-    gameBoardBlock.style.display = 'flex';
+    gameInterfaceBlock.style.display = 'flex';
 
     GAME.computeNextLevel();
 });
