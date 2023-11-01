@@ -4,6 +4,7 @@
     --pink1-color: #ed1b76;
     --pink2-color: #f44786;
     --black-color: black;
+    --not-recomend-color: #b48c56;
 }
 
 
@@ -263,6 +264,10 @@ tr td:not(:first-child) {
 
 tr.act {
     background: var(--pink1-color);
+}
+
+tr.not_recomend {
+    background: var(--not-recomend-color);
 }
 
 
