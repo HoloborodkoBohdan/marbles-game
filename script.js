@@ -259,15 +259,49 @@ class GameTemplate {
             const expectedProfit = playerCurrentMarbles > marblesQty ? marblesQty : playerCurrentMarbles;
         
             if(isEvenSelect) {
-                return isEvenQty ? `(${playerSelectedMarbles}, 0)` : `(0, ${-marblesQty})`;
+                return isEvenQty ? `+${playerSelectedMarbles}` : `-${-marblesQty}`;
             }
-            return isEvenQty ? `(0, ${-marblesQty})` : `(${playerSelectedMarbles}, 0)`;    
+            return isEvenQty ? `-${-marblesQty}` : `+${playerSelectedMarbles}`;    
         });
 
         const matrixData = [oponentMarblesList, generateMatrixRow(true), generateMatrixRow(false)];
         
-        // table creation
+        // table 1 creation
         const table = document.createElement("table");
+        const thead = document.createElement("thead");
+        const tbody = document.createElement("tbody");
+
+        for (let i = 0; i <= oponent.getCurrentMarbles(); i++) {
+            const headerCell = document.createElement("th");
+            headerCell.textContent = i == 0 ? `${player.name} / ${oponent.name}` : i;
+            thead.appendChild(headerCell);
+        }
+        table.appendChild(thead);
+
+        for (let i = 1; i <= player.getCurrentMarbles(); i++) {
+            const row = document.createElement("tr");
+            if (i == player.getSelectedMarbles()) {
+                row.classList.add("act");
+            }
+            for (let j = 0; j <= oponent.getCurrentMarbles(); j++) {
+                const cell = document.createElement("td");
+                let fill = "";
+                if (j == 0) {
+                    fill = i;
+                } else if (player.getCurrentMarbles() > 2) {
+                    if (i > player.getCurrentMarbles() -2) {
+                        fill = "X";
+                    }
+                }
+                cell.textContent = fill === "" ? `${i} - ${j}`: fill;
+                row.appendChild(cell);
+            }
+            tbody.appendChild(row);
+        }
+        table.appendChild(tbody);
+
+        // table 2 creation
+        const table2 = document.createElement("table");
         const headers = isPlayerMachine ? ["Marbles in the machine fist", "Machine guessed even", "Machine guessed edd"] : ["Marbles in machine fist", "Player guessed even", "Player guessed edd"]
         headers.forEach(headerText => {
             const headerCell = document.createElement("th");
@@ -284,10 +318,19 @@ class GameTemplate {
                 cell.textContent = cellData;
                 row.appendChild(cell);
             });
-            table.appendChild(row);
+            table2.appendChild(row);
         });
+
+        
         tableContainer.innerHTML = "";
+        let h1 = document.createElement("h3");
+        h1.innerHTML = "Matrix for selection";
+        tableContainer.appendChild(h1);
         tableContainer.appendChild(table);
+        let h2 = document.createElement("h3");
+        h2.innerHTML = "Matrix for odd or even";
+        tableContainer.appendChild(h2);
+        tableContainer.appendChild(table2);
     }
 };
 

@@ -242,6 +242,10 @@ tr td:not(:first-child) {
 }
 
 
+tr.act {
+    background: var(--pink1-color);
+}
+
 
 .loader {
     height : 8px;
