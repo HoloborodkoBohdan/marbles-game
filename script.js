@@ -13,8 +13,6 @@ const selectedPlayer = document.querySelector('#selected_player');
 const selectedComputer = document.getElementById('selected_computer');
 const guessPlayer = document.querySelector('#guess_player');
 const guessComputer = document.querySelector('#guess_computer');
-
-guess_computer
 const roundNumber = document.querySelector('#round_number');
 const playerScore = document.querySelector('#player_score');
 const playerName = document.querySelector('#player_name');
@@ -22,6 +20,7 @@ const computerName = document.querySelector('#computer_name');
 const computerScore = document.querySelector('#computer_score');
 const gameLogs = document.querySelector('.game_logs');
 const tableContainer = document.querySelector(".game_matrix");
+const gameRestartButton = document.querySelector(".game_restart_button");
 
 // default states
 startButton.disabled = true;
@@ -68,7 +67,6 @@ class Player {
         const selectedMaribles = Math.floor(Math.random() * (max - min + 1)) + min;
 
         this.setSelectedMarbles(selectedMaribles);
-        // selectedComputer.innerHTML = `${selectedMaribles}`;
         showLoader(selectedComputer, `${selectedMaribles}`);
     };
 
@@ -112,23 +110,37 @@ class GameTemplate {
         this.machine.machineSelectMarbles(1, this.machine.getCurrentMarbles());
     }
 
+    resetGame() {
+        this.roundNumber = 1;
+        this.player = new Player(false);
+        this.machine = new Player(true);
+        this.renderPlayerMarblesSelection();
+        this.renderRound();
+
+        this.machine.machineSelectMarbles(1, this.machine.getCurrentMarbles());
+
+        playerName.innerHTML = localStorage.getItem('playerName');
+        GAME.player.name = localStorage.getItem('playerName');
+        gameLogs.innerHTML = '';
+        tableContainer.innerHTML = '';
+    }
+
     renderButtonAfterMachineTurn() {
-        buttonContainer.innerHTML = ''
+        buttonContainer.innerHTML = '';
         const finshRoundWrapper = document.createElement('div');
         const finishRoundButton = document.createElement('button');
         const finishRoundTextElem = document.createElement('span');
         finishRoundTextElem.innerHTML = 'Computer has selected guess. Click "OK" button to finish round'
-        finishRoundButton.classList.add('marble_btn');
+        finishRoundButton.classList.add('marble_btn', 'btn-disabled', 'finish_round');
         finishRoundButton.textContent = 'Ok';
-        //todo: update dynamic styles to similar focus behaviour
-        // finishRoundButton.disabled = true;
+        finishRoundButton.disabled = true;
         finishRoundButton.addEventListener('click', () => {
+            buttonContainer.innerHTML = '';
             this.defineWinner(this.machine, this.player);
         });
 
         finshRoundWrapper.appendChild(finishRoundTextElem);
         finshRoundWrapper.appendChild(finishRoundButton);
-
         buttonContainer.appendChild(finshRoundWrapper);
     };
 
@@ -157,9 +169,6 @@ class GameTemplate {
             }
             helpText.innerHTML = `Select marbles for your move.`;
         }
-        // this.isMachineTurn ? 
-        //     this.renderMatrix(this.machine, this.player, RoundSteps.SELECT_MARABLES_TO_FIST) : 
-        //     this.renderMatrix(this.player, this.machine, RoundSteps.SELECT_MARABLES_TO_FIST);
     }
 
     renderPlayerSelectOddEven = () => {
@@ -198,11 +207,6 @@ class GameTemplate {
         if (this.getIsMachineTurn()) {
             this.machine.machineGuessOddOrEven();
             showLoader(guessComputer, this.machine.choise);
-
-            //todo: if with loader everything fine, lines under can be deleted
-            // guessComputer.innerHTML = this.machine.choise;
-            // buttonContainer.innerHTML = '';
-            // this.defineWinner(this.machine, this.player);
         } else {
             this.renderPlayerSelectOddEven();
         }
@@ -255,7 +259,6 @@ class GameTemplate {
         const oponentMarblesList = Array.from({ length }).map((_, i) => i + 1);
         const generateMatrixRow = (isEvenSelect) => oponentMarblesList.map((marblesQty) => {
             const isEvenQty = marblesQty % 2 === 0;
-            //todo: here should be fixed 10+
             const expectedProfit = playerCurrentMarbles > marblesQty ? marblesQty : playerCurrentMarbles;
         
             if(isEvenSelect) {
@@ -341,6 +344,10 @@ playerNameInput.addEventListener('input', () => {
     startButton.disabled = !playerNameInput.value;
 });
 
+gameRestartButton.addEventListener('click', () => {
+    GAME.resetGame();
+});
+
 startButton.addEventListener('click', () => {
     if (playerNameInput.value === '') {
         alert('Please enter your player name.');
@@ -380,15 +387,14 @@ const showLoader = (targetElem, afterLoaderElem, callback) => { //you can pass a
     }
     targetElem.appendChild(loaderWrapper);
 
+
     setTimeout(() => {
         loaderWrapper.remove();
         targetElem.innerHTML = afterLoaderElem;
-
-        //remove comment and previous line if there will be any bug after removing loader
-        // if(afterLoaderElem.nodeType) {
-        //     targetElem.appendChild(afterLoaderElem);
-        // } else {
-            // targetElem.innerHTML = afterLoaderElem;
-        // }
-    }, 3000)
+        const finishRoundButton = document.querySelector('.finish_round');
+        if(finishRoundButton) {
+            finishRoundButton.disabled = false;
+            finishRoundButton.classList.remove('btn-disabled');
+        }
+    }, 3000);
 }; 

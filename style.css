@@ -193,6 +193,10 @@ h1 {
     font-size: medium;
 }
 
+.btn-disabled {
+    background-color: gray;
+}
+
 .operations {
     color: var(--black-color);
     display: flex;
@@ -213,6 +217,21 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+}
+
+.game_restart_button {
+    position: absolute;
+    right: 0;
+    padding: 0.7rem;
+    font-size: larger;
+    border-color: white;  
+    background-color: var(--green1-color);
+    color: #fff; 
+}
+
+.game_restart_button:hover {
+    background-color: var(--pink1-color);
 }
 
 .game_logs {
