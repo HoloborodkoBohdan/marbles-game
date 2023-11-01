@@ -39,13 +39,19 @@ const rulesPopup = new Popup({
     id: "rules",
     title: "Rules",
     content:
-        "At the beginning, each player has 10 marbles. Each round, players take an arbitrary number of marbles in their fist and take turns guessing whether the opponent has taken an even or odd number of marbles.",
+        `At the beginning, each player (A & B) has 10 marbles. Each round, players take an arbitrary number of marbles in their fist and take turns guessing whether their opponent has taken an even or odd number of marbles.
+        Let's say that player A, who goes first (even/odd number of marbles):
+        <ul>
+        <li> is correct, then player B gives him the number of marbles that player A had in his hands.</li>
+        <li> is wrong, player A gives player B the number of marbles that player B had in his/her hands.</li>
+        </ul>
+        Then the next player guesses, and they change the number of marbles each round. The minimum number of marbles that can be taken in a fist is 1. The maximum number is limited by the number of marbles a player has. The player who runs out of marbles loses.`,
     sideMargin: "2.9vw",
     titleColor: "#fff",
     textColor: "#fff",
     backgroundColor: "#222",
     closeColor: "#fff",
-    fontSizeMultiplier: 1.2,
+    fontSizeMultiplier: 1,
     linkColor: "#888",
 });
 
