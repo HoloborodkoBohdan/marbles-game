@@ -22,6 +22,7 @@ const computerName = document.querySelector('#computer_name');
 const computerScore = document.querySelector('#computer_score');
 const gameLogs = document.querySelector('.game_logs');
 const tableContainer = document.querySelector(".game_matrix");
+const tableContainerTwo = document.querySelector(".game_matrix2");
 
 // default states
 startButton.disabled = true;
@@ -157,9 +158,7 @@ class GameTemplate {
             }
             helpText.innerHTML = `Select marbles for your move.`;
         }
-        // this.isMachineTurn ? 
-        //     this.renderMatrix(this.machine, this.player, RoundSteps.SELECT_MARABLES_TO_FIST) : 
-        //     this.renderMatrix(this.player, this.machine, RoundSteps.SELECT_MARABLES_TO_FIST);
+        this.renderMatrixOne(this.player, this.machine);
     }
 
     renderPlayerSelectOddEven = () => {
@@ -191,7 +190,7 @@ class GameTemplate {
 
         helpText.innerHTML = 'Select odd or even';
         //can be removed
-        this.renderMatrix(this.player, this.machine, RoundSteps.SELECT_EVEN_OR_ADD);
+        this.renderMatrix(this.player, this.machine);
     }
 
     selectOddOrEven = () => {
@@ -234,39 +233,24 @@ class GameTemplate {
 
             player.addMarbles(playerSelectedMarbles);
             oponent.addMarbles(-playerSelectedMarbles);
-
         } else {
             oponent.addMarbles(oponentSelectedMarbles);
             player.addMarbles(-oponentSelectedMarbles);
         }
 
+        if (oponent.getCurrentMarbles() <= 0) {
+            oponent.currentMarbles = 0;
+            player.currentMarbles = 20;
+        } else if ( player.getCurrentMarbles() <= 0) {
+            oponent.currentMarbles = 20;
+            player.currentMarbles = 0;
+        }
+
         this.computeNextLevel();
     }
 
-    renderMatrix(player, oponent, roundStep) { // player is a side, who choose odd or even; round step can be remomed at the moment
-        const isPlayerMachine = player.getName() === 'Computer';
+    renderMatrixOne = (player, oponent) => { 
         tableContainer.innerHTML = "";
-
-        //matrix data generation
-        const playerCurrentMarbles = player.getCurrentMarbles();
-        const playerSelectedMarbles = player.getSelectedMarbles();
-        const oponentCurrentMarbles = oponent.getCurrentMarbles();
-        const length = player.getCurrentMarbles();
-        const oponentMarblesList = Array.from({ length }).map((_, i) => i + 1);
-        const generateMatrixRow = (isEvenSelect) => oponentMarblesList.map((marblesQty) => {
-            const isEvenQty = marblesQty % 2 === 0;
-            //todo: here should be fixed 10+
-            const expectedProfit = playerCurrentMarbles > marblesQty ? marblesQty : playerCurrentMarbles;
-        
-            if(isEvenSelect) {
-                return isEvenQty ? `+${playerSelectedMarbles}` : `-${-marblesQty}`;
-            }
-            return isEvenQty ? `-${-marblesQty}` : `+${playerSelectedMarbles}`;    
-        });
-
-        const matrixData = [oponentMarblesList, generateMatrixRow(true), generateMatrixRow(false)];
-        
-        // table 1 creation
         const table = document.createElement("table");
         const thead = document.createElement("thead");
         const tbody = document.createElement("tbody");
@@ -283,31 +267,69 @@ class GameTemplate {
             if (i == player.getSelectedMarbles()) {
                 row.classList.add("act");
             }
+
             for (let j = 0; j <= oponent.getCurrentMarbles(); j++) {
                 const cell = document.createElement("td");
                 let fill = "";
                 if (j == 0) {
                     fill = i;
+                } else if (i == j) {
+                    fill = `+${i}`;
+                } if (i > oponent.getCurrentMarbles()) {
+                    row.classList.add("not_recomend");
+                    if (j != 0 ) {
+                        fill = '+' + oponent.getCurrentMarbles();
+                    }
                 } else if (player.getCurrentMarbles() > 2) {
-                    if (i > player.getCurrentMarbles() -2) {
+                    if (i > player.getCurrentMarbles() -2 && j != 0) {
                         fill = "X";
                     }
                 }
-                cell.textContent = fill === "" ? `${i} - ${j}`: fill;
+                cell.textContent = fill === "" ? `+${i}`: fill;
                 row.appendChild(cell);
             }
             tbody.appendChild(row);
         }
         table.appendChild(tbody);
 
+        tableContainer.innerHTML = "";
+        let h1 = document.createElement("h3");
+        h1.innerHTML = "Matrix for selection marbles (like you always guess)";
+        tableContainer.appendChild(h1);
+        tableContainer.appendChild(table);
+    }
+
+    renderMatrix(player, oponent) { // player is a side, who choose odd or even; round step can be remomed at the moment
+        const isPlayerMachine = player.getName() === 'Computer';
+        tableContainerTwo.innerHTML = "";
+
+        //matrix data generation
+        const playerCurrentMarbles = player.getCurrentMarbles();
+        const playerSelectedMarbles = player.getSelectedMarbles();
+        const length = player.getCurrentMarbles();
+        const oponentMarblesList = Array.from({ length }).map((_, i) => i + 1);
+        const generateMatrixRow = (isEvenSelect) => oponentMarblesList.map((marblesQty) => {
+            const isEvenQty = marblesQty % 2 === 0;
+            //todo: here should be fixed 10+
+            const expectedProfit = playerCurrentMarbles > marblesQty ? marblesQty : playerCurrentMarbles;
+        
+            if(isEvenSelect) {
+                return isEvenQty ? `+${playerSelectedMarbles}` : `-${-marblesQty}`;
+            }
+            return isEvenQty ? `-${-marblesQty}` : `+${playerSelectedMarbles}`;
+        });
+
+        this.renderMatrixOne(player, oponent)
+
         // table 2 creation
         const table2 = document.createElement("table");
-        const headers = isPlayerMachine ? ["Marbles in the machine fist", "Machine guessed even", "Machine guessed edd"] : ["Marbles in machine fist", "Player guessed even", "Player guessed edd"]
+        const headers = isPlayerMachine ? ["Marbles in the machine fist", "Machine guessed even", "Machine guessed odd"] : ["Marbles in machine fist", "Player guessed even", "Player guessed odd"]
         headers.forEach(headerText => {
             const headerCell = document.createElement("th");
             headerCell.textContent = headerText;
         });
 
+        const matrixData = [oponentMarblesList, generateMatrixRow(true), generateMatrixRow(false)];
         matrixData.forEach((rowData, rowIndex) => {
             const row = document.createElement("tr");
             const firstCell = document.createElement("td");
@@ -321,16 +343,10 @@ class GameTemplate {
             table2.appendChild(row);
         });
 
-        
-        tableContainer.innerHTML = "";
-        let h1 = document.createElement("h3");
-        h1.innerHTML = "Matrix for selection";
-        tableContainer.appendChild(h1);
-        tableContainer.appendChild(table);
         let h2 = document.createElement("h3");
         h2.innerHTML = "Matrix for odd or even";
-        tableContainer.appendChild(h2);
-        tableContainer.appendChild(table2);
+        tableContainerTwo.appendChild(h2);
+        tableContainerTwo.appendChild(table2);
     }
 };
 
