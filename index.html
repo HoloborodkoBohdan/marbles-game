@@ -12,7 +12,6 @@
     <body>
         <div class="header">
             <img src="./img/logo.png" alt="Marbles Game">
-            <a id="rules" href="#rules">Rules</a>
         </div>
 
         <div class="main">
@@ -54,21 +53,24 @@
                         </div>
     
                         <div class="operations">
-                            <p class="selected">Computer select: <span id="selected_computer"></span></p>
+                            <p id="selected" class="selected">Computer select: <span class="cheat_block"></span><span id="selected_computer"></span></p>
                             <p class="guess">Computer guess is: <span id="guess_computer"></span></p>
                         </div>
                     </div>
                 </div>
                 <div class="game_info">
-                    <button class="tech_button tech_button_restart">Click to restart</button>
-                    <button class="tech_button tech_button_advices">DON'T CLICK!</button>
+                    <div class="tech_buttons">
+                        <button id="rules" class="tech_button" href="#rules">Rules</button>
+                        <button class="tech_button tech_button_restart">Click to restart</button>
+                        <button class="tech_button tech_button_advices">DON'T CLICK!</button>
+                        <button class="tech_button tech_button_maxmin">Show MaxMin</button>
+                    </div>
                     <div class="game_logs"></div>
                     <div class="game_matrix2"></div>
                     <div class="game_matrix"></div>
                 </div>
             </div>
         </div>
-
         <div class="footer">
             <span>Inspired by netflix show <a href="https://www.netflix.com/ua-en/title/81040344" target="_blank">'Squid Game'</a>.</span>
         </div>

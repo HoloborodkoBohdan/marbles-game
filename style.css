@@ -19,6 +19,10 @@ body {
     padding: 0;
 }
 
+.header {
+    display: flex;
+}
+
 .header a {
     float: inline-end;
     padding-top: 3rem;
@@ -28,7 +32,7 @@ body {
 }
 
 .header img {
-    width: 200px;
+    width: 350px;
     margin: auto;
 }
 
@@ -41,7 +45,7 @@ h1 {
 
 
 .main {
-    padding: 5rem 3rem 3rem 3rem;
+    padding: 2rem 3rem 3rem 3rem;
     min-height: 18rem;
 }
 
@@ -208,6 +212,7 @@ h1 {
 
 .selected {
     display: flex;
+    position: relative;
 }
 
 .guess {
@@ -221,26 +226,25 @@ h1 {
     position: relative;
 }
 
-.tech_button {
+.tech_buttons {
     position: absolute;
+    display: flex;
+    flex-direction: column;
+    right: 0;
+}
+
+.tech_button {
     padding: 0.7rem;
     font-size: larger;
     border-color: white;  
     background-color: var(--green1-color);
     color: #fff;
     cursor: pointer;
+    margin-bottom: 1rem;
 }
 
 .tech_button:hover {
     background-color: var(--pink1-color);
-}
-
-.tech_button_restart {
-    right: 0;
-}
-
-.tech_button_advices {
-    left: 0;
 }
 
 .game_logs {
@@ -270,6 +274,10 @@ td.optimum {
     color: #fff;
 }
 
+td.result_cell {
+    background-color: var(--not-recomend-color)
+}
+
 tr td:not(:first-child) {
     text-align: center;
 }
@@ -282,6 +290,15 @@ tr.act {
 tr.not_recomend {
     background: var(--not-recomend-color);
 }
+
+.cheat_block {
+    width: 18px;
+    height: 20px;
+    background-color: var(--pink1-color);
+    right: -18px;
+}
+
+
 
 
 .loader {
