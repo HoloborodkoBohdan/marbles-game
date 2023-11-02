@@ -257,6 +257,11 @@ td {
     padding: 0.3rem;
 }
 
+td.optimum {
+    background-color: var(--pink2-color);
+    color: #fff;
+}
+
 tr td:not(:first-child) {
     text-align: center;
 }
@@ -295,4 +300,17 @@ tr.not_recomend {
 @keyframes fadeOutIn {
     0%   { background-color : rgba(0,146,255,1); }
     100% { background-color : rgba(0,146,255,0); }
+}
+
+
+.game_matrix2 button {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid var(--pink2-color);;
+    background: var(--pink1-color);
+    color: white;
+}
+
+.game_matrix2 button:hover {
+    background: var(--green1-color);
 }

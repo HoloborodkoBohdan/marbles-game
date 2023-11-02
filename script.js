@@ -33,6 +33,10 @@ const RoundSteps = {
 }
 
 
+function emptyElement(element) {
+    element.innerHTML = "";
+}
+
 // popups
 const rulesPopup = new Popup({
     id: "rules",
@@ -99,10 +103,11 @@ class GameTemplate {
         roundNumber.innerHTML = GAME.roundNumber;
         playerScore.innerHTML = GAME.player.getCurrentMarbles();
         computerScore.innerHTML = GAME.machine.getCurrentMarbles();
-        guessComputer.innerHTML = '';
-        guessPlayer.innerHTML = '';
-        selectedComputer.innerHTML = '';
-        selectedPlayer.innerHTML = '';
+        emptyElement(guessComputer);
+        emptyElement(guessPlayer);
+        emptyElement(selectedComputer);
+        emptyElement(selectedPlayer);
+        this.renderMatrixTwo();
     }
 
     computeNextLevel() {
@@ -179,6 +184,14 @@ class GameTemplate {
         this.renderMatrixOne(this.player, this.machine);
     }
 
+    renderMatrixTwo() {
+        if (this.isMachineTurn) {
+            this.renderMatrix(this.player, this.machine);
+            return;
+        }
+        this.renderMatrix(this.machine, this.player);
+    }
+
     renderPlayerSelectOddEven = () => {
         buttonContainer.innerHTML = '';
 
@@ -208,7 +221,8 @@ class GameTemplate {
 
         helpText.innerHTML = 'Select odd or even';
         //can be removed
-        this.renderMatrix(this.player, this.machine);
+
+        this.renderMatrixTwo();
     }
 
     selectOddOrEven = () => {
@@ -241,6 +255,7 @@ class GameTemplate {
                 helpText.innerHTML = `Winner is: ${player.name}`;
                 playerScore.innerHTML = GAME.player.getCurrentMarbles();
                 computerScore.innerHTML = GAME.machine.getCurrentMarbles();
+                this.renderMatrixTwo();
                 return; // return finish popup
             }
 
@@ -254,16 +269,18 @@ class GameTemplate {
         if (oponent.getCurrentMarbles() <= 0) {
             oponent.currentMarbles = 0;
             player.currentMarbles = 20;
+            emptyElement(tableContainer);
         } else if ( player.getCurrentMarbles() <= 0) {
             oponent.currentMarbles = 20;
             player.currentMarbles = 0;
+            emptyElement(tableContainer);
         }
 
         this.computeNextLevel();
     }
 
     renderMatrixOne = (player, oponent) => { 
-        tableContainer.innerHTML = "";
+        emptyElement(tableContainer);
         const table = document.createElement("table");
         const thead = document.createElement("thead");
         const tbody = document.createElement("tbody");
@@ -305,16 +322,62 @@ class GameTemplate {
         }
         table.appendChild(tbody);
 
-        tableContainer.innerHTML = "";
+        emptyElement(tableContainer);
         let h1 = document.createElement("h3");
         h1.innerHTML = "Matrix for selection marbles (like you always guess)";
         tableContainer.appendChild(h1);
         tableContainer.appendChild(table);
     }
 
+    parseRow = (row) => {
+        let tds = row.querySelectorAll('td');
+        let numbers = [];
+        for (let i = 1; i < tds.length; i++) {
+            let text = tds[i].textContent || tds[i].innerText;
+            let number = parseInt(text, 10);
+            if (!isNaN(number)) {
+                numbers.push(number);
+            }
+        }
+        return numbers;
+    }
+
+    findMaxMin = () => {
+        let matrix = document.querySelectorAll('.game_matrix2 table tr');
+        let oddRow = matrix[1];
+        let evenRow = matrix[2];
+
+        let oddRowNumbers = this.parseRow(oddRow);
+        let evenRowNumbers = this.parseRow(evenRow);
+
+
+        let minOdd = Math.min(...oddRowNumbers);
+        let minEven = Math.min(...evenRowNumbers);
+
+        if (minOdd > minEven) {
+            this.highlightOptimum(oddRow, minOdd);
+        } else if (minOdd < minEven) {
+            this.highlightOptimum(evenRow, minEven);
+        } else {
+            this.highlightOptimum(oddRow, minOdd);
+            this.highlightOptimum(evenRow, minEven);
+        }
+    }
+
+    highlightOptimum = (row, minValue) => {
+        let tds = row.querySelectorAll('td');
+        for (let i = 1; i < tds.length; i++) { 
+            let text = tds[i].textContent || tds[i].innerText;
+            let number = parseInt(text, 10);
+
+            if (!isNaN(number) && number === minValue) {
+                tds[i].classList.add('optimum');
+            }
+        }
+    }
+
     renderMatrix(player, oponent) { // player is a side, who choose odd or even; round step can be remomed at the moment
-        const isPlayerMachine = player.getName() === 'Computer';
-        tableContainerTwo.innerHTML = "";
+        emptyElement(tableContainerTwo);
 
         //matrix data generation
         const playerCurrentMarbles = player.getCurrentMarbles();
@@ -323,20 +386,18 @@ class GameTemplate {
         const oponentMarblesList = Array.from({ length }).map((_, i) => i + 1);
         const generateMatrixRow = (isEvenSelect) => oponentMarblesList.map((marblesQty) => {
             const isEvenQty = marblesQty % 2 === 0;
-            //todo: here should be fixed 10+
             const expectedProfit = playerCurrentMarbles > marblesQty ? marblesQty : playerCurrentMarbles;
         
             if(isEvenSelect) {
-                return isEvenQty ? `+${playerSelectedMarbles}` : `-${-marblesQty}`;
+                return isEvenQty ? `+${playerSelectedMarbles}` : `${-marblesQty}`;
             }
-            return isEvenQty ? `-${-marblesQty}` : `+${playerSelectedMarbles}`;
+            return isEvenQty ? `${-marblesQty}` : `+${playerSelectedMarbles}`;
         });
 
         this.renderMatrixOne(player, oponent)
 
-        // table 2 creation
         const table2 = document.createElement("table");
-        const headers = isPlayerMachine ? ["Marbles in the machine fist", "Machine guessed even", "Machine guessed odd"] : ["Marbles in machine fist", "Player guessed even", "Player guessed odd"]
+        const headers = player.isMachine ? ["Marbles in computer fist", "If even", "If odd"] : ["Marbles in players fist", "If you choose even", "If you choose odd"]
         headers.forEach(headerText => {
             const headerCell = document.createElement("th");
             headerCell.textContent = headerText;
@@ -360,6 +421,13 @@ class GameTemplate {
         h2.innerHTML = "Matrix for odd or even";
         tableContainerTwo.appendChild(h2);
         tableContainerTwo.appendChild(table2);
+
+        let btn = document.createElement('button');
+        btn.textContent = 'Show Maxmin';
+        btn.addEventListener('click', function() {
+            GAME.findMaxMin();
+        });
+        tableContainerTwo.appendChild(btn);
     }
 };
 
