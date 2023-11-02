@@ -221,18 +221,26 @@ h1 {
     position: relative;
 }
 
-.game_restart_button {
+.tech_button {
     position: absolute;
-    right: 0;
     padding: 0.7rem;
     font-size: larger;
     border-color: white;  
     background-color: var(--green1-color);
-    color: #fff; 
+    color: #fff;
+    cursor: pointer;
 }
 
-.game_restart_button:hover {
+.tech_button:hover {
     background-color: var(--pink1-color);
+}
+
+.tech_button_restart {
+    right: 0;
+}
+
+.tech_button_advices {
+    left: 0;
 }
 
 .game_logs {

@@ -1,6 +1,3 @@
-//TODO IDEA: show button to continue next step!!! say Bohdan
-//WARNING: bag where user should click 2-3 times swill exist!!!!
-
 // UI elements
 const playerNameInput = document.querySelector('#player_name_input');
 const startButton = document.querySelector('#start');
@@ -20,18 +17,13 @@ const computerName = document.querySelector('#computer_name');
 const computerScore = document.querySelector('#computer_score');
 const gameLogs = document.querySelector('.game_logs');
 const tableContainer = document.querySelector(".game_matrix");
-const gameRestartButton = document.querySelector(".game_restart_button");
+const gameRestartButton = document.querySelector(".tech_button_restart");
+const advicesButton = document.querySelector(".tech_button_advices");
 const tableContainerTwo = document.querySelector(".game_matrix2");
 
 // default states
 startButton.disabled = true;
 gameInterfaceBlock.style.display = 'none';
-
-const RoundSteps = {
-    SELECT_MARABLES_TO_FIST: 'SELECT_MARABLES_TO_FIST',
-    SELECT_EVEN_OR_ADD: 'SELECT_MARABLES_TO_FIST',
-}
-
 
 // popups
 const rulesPopup = new Popup({
@@ -53,6 +45,58 @@ const rulesPopup = new Popup({
     fontSizeMultiplier: 1,
     linkColor: "#888",
 });
+
+const advicePopup = () => {
+    const isMachineTurn = GAME.isMachineTurn;
+    const currentPlayerMarbles = GAME.player.getCurrentMarbles();
+    const currentMachineMarbles = GAME.machine.getCurrentMarbles();
+
+    const advices = [];
+
+    if(currentPlayerMarbles > currentMachineMarbles) {
+        advices.push(`<li>Try to select marbles no more then ${currentMachineMarbles} marbles</li>`);
+    }
+
+    if((currentMachineMarbles % 2 !== 0)) {
+        advices.push(`<li>If you are a quesser it's better to select "edd" in case when all marbles on hand is "edd"</li>`);
+    }
+
+    if(GAME.roundNumber === 1 && isMachineTurn) {
+        advices.push(`<li>If you are a hider for round 1 by game theory is better to select 10 marbles => 50/50 chance to win</li>`);
+    }
+
+    if(GAME.roundNumber === 1) {
+        advices.push(`<li>If you are a quesser for round 1 by game theory is better to select 10 marbles => 50/50 chance to win</li>`);
+    }
+
+    if(GAME.roundNumber === 1 && !isMachineTurn) {
+        advices.push(`<li>If you are a quesser for round 1 there is one more way to keep effective selecting - select 9 marbles => 50/50 chance to win (details see after)</li>`);
+    }
+
+    const detailsAdvices = GAME.roundNumber === 1 && !isMachineTurn ? 
+    `---------------------------
+    if you select 9: 1 round - 50/50 chance to win; 
+    if losed in 2 round you select 1 marble and can quess => 50/50 chance to win;
+    if win then you have 2 marbles in 3 round and oponent has 50/50 chance to guess right;
+    then game continue without any specific advices instead off case when 10/10 marbles in each hand again` : '';
+
+    const advisesText = advices.length === 0 ? 
+    `You can select just a number betwwen ${1} and ${currentPlayerMarbles}. Unfortunatelly, there is no some specific strategy.` : 
+    `<ul>${advices.join('')}</ul>`;
+
+    return new Popup({
+        id: "advices",
+        title: "Advices/Cheates",
+        content: advisesText + detailsAdvices,
+        sideMargin: "2.9vw",
+        titleColor: "#fff",
+        textColor: "#fff",
+        backgroundColor: "#222",
+        closeColor: "#fff",
+        fontSizeMultiplier: 1,
+        linkColor: "#888",
+    });
+};
 
 class Player {
     constructor(isMachine) {
@@ -372,6 +416,10 @@ playerNameInput.addEventListener('input', () => {
 
 gameRestartButton.addEventListener('click', () => {
     GAME.resetGame();
+});
+
+advicesButton.addEventListener('click', () => {
+    advicePopup().show();
 });
 
 startButton.addEventListener('click', () => {
